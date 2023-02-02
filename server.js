@@ -10,11 +10,12 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+//routes to use in app
 app.use(require("./src/Routes/UserRegister"))
+app.use("/login",require("./src/Routes/Login"))
+app.use("/category", require("./src/Routes/CreateCategory"))
+
 //Listen on port localhost
 app.listen(4000)
-
-//routes to use in app
-
 
 console.log("server on port 4000");
