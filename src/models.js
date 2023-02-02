@@ -5,6 +5,10 @@ const Sequelize = require('sequelize');
 
 //Product Entity
 const Product = sequelize.define("Product", {
+  id_prod:{
+    type: Sequelize.INTEGER,
+    primaryKey: true
+  },
   name: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -27,6 +31,10 @@ const Product = sequelize.define("Product", {
 //Category entity
 
 const Category = sequelize.define("Category", {
+  id_cat:{
+    type: Sequelize.INTEGER,
+    primaryKey: true
+  },
   name: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -70,19 +78,37 @@ const User = sequelize.define("User", {
   })
 
   const C_P = sequelize.define("Category_Product", {
-    idProd: {
+    id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       allowNull:false
       
 
-    },
-    idCat: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      allowNull:false
     }
   })
+
+// establecer relaciones
+C_P.belongsTo(Product, {
+  foreignKey: {
+    name: "ProductId",
+    allowNull: false
+  }
+});
+
+C_P.belongsTo(Category, {
+  foreignKey: {
+    name: "CategoryId",
+    allowNull: false
+  }
+});
+
+Product.hasMany(C_P, {
+  foreignKey: "ProductId"
+});
+
+Category.hasMany(C_P, {
+  foreignKey: "CategoryId"
+});
   
   //Relacion 1:1 User to Attemps
   Attemps.belongsTo(User,{
@@ -93,5 +119,5 @@ const User = sequelize.define("User", {
     console.log('Tablas creadas o actualizadas en la base de datos.');
   });
   
-module.exports= {User,Attemps, Product,Category}
+module.exports= {User,Attemps, Product,Category, C_P}
 

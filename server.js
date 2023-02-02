@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 //routes to use in app
 app.use(require("./src/Routes/UserRegister"))
 app.use("/login",require("./src/Routes/Login"))
-app.use("/category", require("./src/Routes/CreateCategory"))
+app.use("/category", require("./src/Routes/Category"))
 
 //Listen on port localhost
 app.listen(4000)
