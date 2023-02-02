@@ -8,8 +8,8 @@ const bcrypt = require('bcryptjs');
   router.get('/register', async(req,res)=>{
     res.send('qlq2')
   })
-
-router.post('/register', async (req, res) => {
+//Metodo Post para Registrar el usuario en la base de datos 
+router.post('/registerUser', async (req, res) => {
     try {
       const { username, firstName, lastName, password, email } = req.body;
         const EncryptedPassword = await bcrypt.hash(password,12)
