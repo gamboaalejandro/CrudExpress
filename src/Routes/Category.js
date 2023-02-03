@@ -1,11 +1,13 @@
 const express = require("express");
 const {Category} = require("../models");
 const router = express.Router();
-const bcrypt = require('bcryptjs');
+
 
 //endpoint para la creacion de una categoria
 
 router.post("/Create", async (req,res)=>{
+  try{
+
     const {name, description} = req.body
     console.log(name)
     //Validacion de campos no vacios
@@ -23,27 +25,29 @@ router.post("/Create", async (req,res)=>{
         description
     })
 
-    res.json({Msg:"Categoria Creada Exitosamente"})
+    res.status(200).json({Msg:"Categoria Creada Exitosamente"})
+
+  }catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+    
 })
 
 ///METODO PARA ACTUALIZAR LA CATEGORIA
 router.put('/:id',async (req,res)=>{
 
+  try{
     const id = req.params.id;
     const updatedCategory = req.body;
 
     if (!updatedCategory.name || !updatedCategory.description) {
         return res.status(400).json({ error: 'no pueden dejar campos vacios al actualizar categoria' });
       }
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
       Category.update(updatedCategory, { where: { id } })
       .then(([rowsUpdated]) => {
         if (rowsUpdated) {
-
           res.status(200).json({ message: 'Categoría actualizada correctamente' });
-
-
         } else {
           res.status(404).json({ message: 'No se encontró la categoría con el ID especificado' });
         }
@@ -51,14 +55,23 @@ router.put('/:id',async (req,res)=>{
       .catch(error => {
         res.status(500).json({ message: 'Ocurrió un error al actualizar la categoría', error });
       });
+    
+  }catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
 } )
 
 router.get('/ListaCategoria', async (req,res) => {
-  
-  const Categorias =await Category.findAll({
-    attributes: ['name', 'description']
-  });
-  res.status(200).json(Categorias);
+  try{
+    const Categorias =await Category.findAll({
+      attributes: ['name', 'description']
+    });
+    res.status(200).json(Categorias);
+  }catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
 })
 
 module.exports =router

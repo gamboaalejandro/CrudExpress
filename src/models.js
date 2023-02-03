@@ -5,10 +5,6 @@ const Sequelize = require('sequelize');
 
 //Product Entity
 const Product = sequelize.define("Product", {
-  id_prod:{
-    type: Sequelize.INTEGER,
-    primaryKey: true
-  },
   name: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -31,10 +27,6 @@ const Product = sequelize.define("Product", {
 //Category entity
 
 const Category = sequelize.define("Category", {
-  id_cat:{
-    type: Sequelize.INTEGER,
-    primaryKey: true
-  },
   name: {
     type: Sequelize.STRING,
     allowNull: false,
