@@ -2,81 +2,74 @@ const express = require("express");
 const {Category} = require("../models");
 const router = express.Router();
 
-
-//endpoint para la creacion de una categoria
-
-router.post("/Create", async (req,res)=>{
-  try{
-    //Creacion de la categora dado un body proveniente del cliente
-    const {name, description} = req.body
+// Endpoint for creating a category
+router.post("/Create", async (req, res) => {
+  try {
+    // Creation of the category from a body from the client
+    const { name, description } = req.body
     console.log(name)
-    //Validacion de campos no vacios
+    // Empty field validation
     if (!name || !description) {
-        return res.status(400).json({ error: 'Todos los campos son requeridos para crear categoria' });
+        return res.status(400).json({ error: 'Todos los campos son requeridos' });
       }
-      //Validacion de si existe o no dicha categoria
+      // Validation of whether or not the category exists
     const category = await Category.findOne({where:{name:name}})
     if(category !== null) {
-        return res.status(400).json({error:"la categoria ya se encuentra registrada"})
+        return res.status(400).json({error:"La categoria ya se encuentra registrada"})
     }
-    //Creacion de la categoria en la base de datos
+    // Creation of the category in the database
     await Category.create({ 
         name,
         description
     })
 
-    res.status(200).json({Msg:"Categoria Creada Exitosamente"})
+    res.status(200).json({Msg:"Categoria creada exitosamente"})
 
-  }catch (error) {
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-    
 })
 
-///METODO PARA ACTUALIZAR LA CATEGORIA
-router.put('/:id',async (req,res)=>{
-
-  try{
-    //Buscamos el ID de la categoria junto con los datos de la categoria actualizada previamente
+/// METHOD TO UPDATE THE CATEGORY
+router.put('/:id', async (req, res) => {
+  try {
+    // We look for the ID of the category along with the data of the previously updated category
     const id = req.params.id;
     const updatedCategory = req.body;
 
-    //verificacion de campos no vacios
+    // Empty field verification
     if (!updatedCategory.name || !updatedCategory.description) {
-        return res.status(400).json({ error: 'no pueden dejar campos vacios al actualizar categoria' });
+        return res.status(400).json({ error: 'No se permite dejar campos en blanco mientras actualiza categoria' });
       }
 
-      //actualizacion de dicha categoria a la base de datos
+      // Updating the category in the database
       Category.update(updatedCategory, { where: { id } })
       .then(([rowsUpdated]) => {
         if (rowsUpdated) {
-          res.status(200).json({ message: 'Categoría actualizada correctamente' });
+          res.status(200).json({ message: 'Categoria modificada satisfactoriamente' });
         } else {
-          res.status(404).json({ message: 'No se encontró la categoría con el ID especificado' });
+          res.status(404).json({ message: 'No se encuentra la categoria con el Id especificado' });
         }
       })
       .catch(error => {
-        res.status(500).json({ message: 'Ocurrió un error al actualizar la categoría', error });
+        res.status(500).json({ message: 'Ha ocurrido un error mientras se actualizaba la categoria', error });
       });
-    
-  }catch (error) {
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-
-} )
-
-router.get('/ListaCategoria', async (req,res) => {
-  try{
-    const Categorias =await Category.findAll({
-      attributes: ['name', 'description']
-    });
-    res.status(200).json(Categorias);
-  }catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-
 })
 
-module.exports =router
+router.get('/ListaCategoria', async (req, res) => {
+  try {
+    const Categories = await Category.findAll({
+      attributes: ['name', 'description']
+    });
+    res.status(200).json(Categories);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+})
+
+module.exports = router
 
 

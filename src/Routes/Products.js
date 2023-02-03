@@ -1,63 +1,67 @@
 const express = require("express")
 const {Product,Category,C_P} = require("../models")
-const {sequelize, Sequelize} =  require("../db")
+const {sequelize, Sequelize} = require("../db")
+
 const router = express.Router()
 
-
-//metodo post para la creacion de
+//"Create a POST endpoint at '/Create' to create a new product"
 router.post("/Create", async(req,res)=>{
-    try{
-        const {name,description,price,quantity, categoria} = req.body
+try{
 
-         //validacion de campos no vacios 
-         if((!name || !description || !price || !quantity || !categoria))
-         return res.status(400).json({error: "Todos los campos son requeridos "})
-        //buscamos la categoria y verificamos que exista
-        const category  = await Category.findOne({where:{name: categoria}})
-        //Verificamos que el id de la categoria exista para poder meter el producto
-        if(category.name !== categoria) 
-        return res.status(400).json({error: "Categoria no existe "})
+//"Get the values of the name, description, price, quantity, and categoria fields from the request body"
+const {name,description,price,quantity, categoria} = req.body
+//"Check if all the fields are present in the request body"
+if((!name || !description || !price || !quantity || !categoria))
+return res.status(400).json({error: "Todos los campos son requeridos"})
 
-        //validacion de no negatividad del precio y la cantidad
-        if((price < 0 || quantity < 0))
-        return res.status(400).json({error: "Los valores no pueden ser negativos"})
+//"Find a category with the given name and check if it exists"
+const category  = await Category.findOne({where:{name: categoria}})
+if(category.name !== categoria) 
+return res.status(400).json({error: "la categoria no existe"})
 
-        //validacion si el campo cantidad es invalido
-        if(!(Number.isFinite(quantity)))
-        return res.status(400).json({error: "Campo Cantidad invalido "})
+//"Check if the price and quantity are not negative"
+if((price < 0 || quantity < 0))
+return res.status(400).json({error: "Los valores no pueden ser negativos"})
 
-        else
+//"Check if the quantity field is valid"
+if(!(Number.isFinite(quantity)))
+return res.status(400).json({error: "Cantidad Invalida"})
 
-        if(!(Number.isFinite(price))) 
-        return res.status(400).json({error: "Campo Precio invalido "})
-        const findProduct =await  Product.findOne({where: {name:name}})
+else 
 
-        if (findProduct !== null) return res.status(400).json({error:"El producto ya se encuentra registrado"})
-        //CREAMOS EL PRODUCTO
-       await Product.create({
-            name,
-            description,
-            price,
-            quantity
-        }).then(product => {
-            //antes de crear el producto, se mete a la tabla de interseccion para que se sepa su categoria
-            const Cat_prod = {
-            categoryId: category.id,
-              productId: product.id
-            
-            };
-                //Crea en la base de datos el registro de ese producto con su categoria
-           C_P.create(Cat_prod)
-          })
-          .then(() => {
-            //si es success devuelve la respuesta de la creacion
-            res.status(201).json({ message: 'Producto y categoría guardados con éxito' });
-          })
-          .catch(error => {
-            res.status(400).json({ message: 'Error al guardar producto y categoría' });
-          });
-    }catch (error) {
-        return res.status(500).json({ error: error.message });
+//"Check if the price field is valid"
+if(!(Number.isFinite(price))) 
+return res.status(400).json({error: "Precio Invalido"})
+
+//"Check if the product with the given name already exists"
+const findProduct =await  Product.findOne({where: {name:name}})
+if (findProduct !== null) return res.status(400).json({error:"El producto ya existe"})
+
+//"Create a new product with the given name, description, price, and quantity"
+await Product.create({
+    name,
+    description,
+    price,
+    quantity
+}).then(product => {
+    //"Create a record in the C_P table to link the product with its category"
+    const Cat_prod = {
+    categoryId: category.id,
+    productId: product.id
+    };
+    C_P.create(Cat_prod)
+})
+.then(() => {
+   // "Return a success response if the product and its category were successfully saved"
+    res.status(201).json({ message: 'Producto y categoria Guardados satis' });
+})
+.catch(error => {
+    //"Return an error response if there was an error saving the product and its category"
+    res.status(400).json({ message: 'Error Guardando la categoria y el producto' });
+});
+} catch (error) {
+//"Return a server error response if there was an error"
+return res.status(500).json({ error: error.message });
       }
 
 })
@@ -65,25 +69,28 @@ router.post("/Create", async(req,res)=>{
 router.put('/update/:id', async (req,res)=>{
     try{
         const id = req.params.id;
+        
+    //"Get the values of the name, description, price, quantity fields from the request body"
         const updatedProduct = req.body;
-        //validacion de campos vacios
+        //"Check if all the fields are present in the request body"
         if((!updatedProduct.name || !updatedProduct.description || !updatedProduct.price || !updatedProduct.quantity))
         return res.status(400).json({error: "Todos los campos son requeridos "})
 
 
-        //validacion de no negatividad del precio y la cantidad
+      //"Check if the price and quantity are not negative"
         if((updatedProduct.price < 0 || updatedProduct.quantity < 0))
         return res.status(400).json({error: "Los valores no pueden ser negativos"})
 
-        //validacion si el campo cantidad es invalido
+       //"Check if the quantity field is valid"
         if(!(Number.isInteger(updatedProduct.quantity)))
         return res.status(400).json({error: "Campo Cantidad invalido "})
 
         else
-        //validacion de campo precio
+        //"Check if the price field is valid"
         if(!(Number.isFinite(updatedProduct.price))) 
         return res.status(400).json({error: "Campo Precio invalido "})
 
+        //UPDATING PRODUCT...
         Product.update(updatedProduct, { where: { id } })
       .then(([rowsUpdated]) => {
         if (rowsUpdated) {
@@ -101,6 +108,7 @@ router.put('/update/:id', async (req,res)=>{
       }
 })
 
+//Product list
 router.get('/listaProducto', async(req,res)=>{
     try{
         const Productos =await Product.findAll({
@@ -112,14 +120,14 @@ router.get('/listaProducto', async(req,res)=>{
       }
 })
 
-///Productos por categoria 
+///Productos by Category
 
 
 router.get("/Productos_por_categoria/:id", async (req,res)=>{
     try {
         const id = req.params.id;
         const cat=await Category.findOne({where:{id:id}})
-        
+        //Ejecucion del Query para poder obtener todos los productos por categoria
         sequelize.query("	SELECT pr.name, pr.description, pr.price, pr.quantity, cr.name from "+"\"Categories\""+" as cr, "+"\"Products\""+" as pr, "+"\"Category_Products\""+" as cpr where pr.id= cpr."+"\"productId\""+
         " and cr.id = cpr."+"\"categoryId\""+" and cr.id ="+id+"", {
             replacements: { categoryId: cat.id },

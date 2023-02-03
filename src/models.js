@@ -3,7 +3,7 @@ const {sequelize} = require('./db')
 const Sequelize = require('sequelize');
 
 
-//Product Entity
+//Product Entity: entity model For a product
 const Product = sequelize.define("Product", {
   name: {
     type: Sequelize.STRING,
@@ -24,7 +24,7 @@ const Product = sequelize.define("Product", {
   },
 });
 
-//Category entity
+//Category entity: Entity model for products's Categories
 
 const Category = sequelize.define("Category", {
   name: {
@@ -38,7 +38,7 @@ const Category = sequelize.define("Category", {
   },
 });
 
-// USER ENTITy
+// USER ENTITy: entity model for users
 
 const User = sequelize.define("User", {
     username: {
@@ -58,7 +58,7 @@ const User = sequelize.define("User", {
     }
   });
   
-  //Attemps entity
+  //Attemps entity: helper entity to control attempts in Login
   const Attemps = sequelize.define("Attemps",{
     username: {
       type: Sequelize.STRING
@@ -70,7 +70,7 @@ const User = sequelize.define("User", {
   
   })
  
-  // Define el modelo de la tabla de intersección
+  // Definition model for intersection entity between Product and Category
 const C_P = sequelize.define('Category_Product', {
   categoryId: {
     type: Sequelize.INTEGER,
@@ -88,7 +88,6 @@ const C_P = sequelize.define('Category_Product', {
   }
 });
 
-// Relacion de uno a muchos entre Category y Product
 Category.hasMany(Product, {
   foreignKey: {
     name: "id",
@@ -102,7 +101,7 @@ Product.belongsTo(Category, {
   }
 });
 
-// Relacion de muchos a muchos entre Category y Product a través de la tabla de intersección CategoryProduct
+// Many to Many relation between Category and Product
 Category.belongsToMany(Product, {
   through: C_P,
   foreignKey: {
@@ -118,12 +117,13 @@ Product.belongsToMany(Category, {
   },
   as:'categories'
 });
-  //Relacion 1:1 User to Attemps
+  //Relation 1:1 User to Attemps
   Attemps.belongsTo(User,{
     foreingKey: 'username',
     targetkey: 'username'
   })
 
+  //Create or Update Datebase 
   sequelize.sync().then(() => {
     console.log('Tablas creadas o actualizadas en la base de datos.');
   });
