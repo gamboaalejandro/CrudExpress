@@ -1,7 +1,7 @@
 const express = require("express")
 const {Product,Category,C_P} = require("../models")
+const {sequelize, Sequelize} =  require("../db")
 const router = express.Router()
-const {isFloat} =  require("../ValidateFunction")
 
 
 //metodo post para la creacion de
@@ -112,19 +112,28 @@ router.get('/listaProducto', async(req,res)=>{
       }
 })
 
-
-
 ///Productos por categoria 
 
-router.get("/Productos_por_categoria", async (req,res)=>{
 
-    const products = Product.findAll({
-        include: [{
-            model: C_P,
-            where: { id: 2 }
-        }]
-    });
-      res.json(products)
+router.get("/Productos_por_categoria/:id", async (req,res)=>{
+    try {
+        const id = req.params.id;
+        const cat=await Category.findOne({where:{id:id}})
+        
+        sequelize.query("	SELECT pr.name, pr.description, pr.price, pr.quantity, cr.name from "+"\"Categories\""+" as cr, "+"\"Products\""+" as pr, "+"\"Category_Products\""+" as cpr where pr.id= cpr."+"\"productId\""+
+        " and cr.id = cpr."+"\"categoryId\""+" and cr.id ="+id+"", {
+            replacements: { categoryId: cat.id },
+            type: sequelize.QueryTypes.SELECT
+          })
+          .then(products => {
+            res.json(products)
+          })
+          .catch(error => {
+            console.error(error)
+          });
+      } catch (error) {
+        res.status(500).json({ message: "La Categoria no se encuentra registrada" });
+      }
 })
 
 module.exports = router

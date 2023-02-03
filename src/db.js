@@ -4,5 +4,4 @@ const sequelize = new Sequelize("test", "postgres", "darkipro1012", {
   host: "localhost",
   dialect: "postgres"
 });
-
-module.exports = sequelize
+module.exports = {sequelize , Sequelize}

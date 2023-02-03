@@ -1,5 +1,5 @@
 const { PrimaryColumn } = require('typeorm');
-const sequelize = require('./db')
+const {sequelize} = require('./db')
 const Sequelize = require('sequelize');
 
 
@@ -9,7 +9,7 @@ const Product = sequelize.define("Product", {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  description: {
+  descripcion: {
     type: Sequelize.TEXT,
     allowNull: false,
   },
@@ -31,7 +31,7 @@ const Category = sequelize.define("Category", {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  
+
   description: {
     type: Sequelize.TEXT,
     allowNull: false,
@@ -115,7 +115,8 @@ Product.belongsToMany(Category, {
   foreignKey: {
     name: "productId",
     allowNull: false,
-  }
+  },
+  as:'categories'
 });
   //Relacion 1:1 User to Attemps
   Attemps.belongsTo(User,{
