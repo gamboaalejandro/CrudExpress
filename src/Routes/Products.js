@@ -101,7 +101,6 @@ const router = express.Router()
 //"Create a POST endpoint at '/Create' to create a new product"
 router.post("/Create", async (req, res) => {
     try {
-
         //"Get the values of the name, description, price, quantity, and categoria fields from the request body"
         const {
             name,
@@ -162,7 +161,6 @@ router.post("/Create", async (req, res) => {
         })
 
         //"Create a new product with the given name, description, price, and quantity"
-        console.log("perreo")
         await Product.create({
                 name,
                 description,
