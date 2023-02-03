@@ -123,8 +123,9 @@ router.post("/Create", async (req, res) => {
                 name: categoria
             }
         })
+
     
-        if (category.name !== categoria)
+        if (!category)
             return res.status(400).json({
                 error: "la categoria no existe"
             })
