@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/Create", async (req,res)=>{
   try{
-
+    //Creacion de la categora dado un body proveniente del cliente
     const {name, description} = req.body
     console.log(name)
     //Validacion de campos no vacios
@@ -37,13 +37,16 @@ router.post("/Create", async (req,res)=>{
 router.put('/:id',async (req,res)=>{
 
   try{
+    //Buscamos el ID de la categoria junto con los datos de la categoria actualizada previamente
     const id = req.params.id;
     const updatedCategory = req.body;
 
+    //verificacion de campos no vacios
     if (!updatedCategory.name || !updatedCategory.description) {
         return res.status(400).json({ error: 'no pueden dejar campos vacios al actualizar categoria' });
       }
 
+      //actualizacion de dicha categoria a la base de datos
       Category.update(updatedCategory, { where: { id } })
       .then(([rowsUpdated]) => {
         if (rowsUpdated) {

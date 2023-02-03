@@ -31,6 +31,7 @@ const Category = sequelize.define("Category", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  
   description: {
     type: Sequelize.TEXT,
     allowNull: false,
@@ -68,45 +69,60 @@ const User = sequelize.define("User", {
   
   
   })
-
-  const C_P = sequelize.define("Category_Product", {
-    id: {
-      type: Sequelize.INTEGER,
-      primaryKey: true,
-      allowNull:false
-      
-
+ 
+  // Define el modelo de la tabla de intersección
+const C_P = sequelize.define('Category_Product', {
+  categoryId: {
+    type: Sequelize.INTEGER,
+    references: {
+      model: 'Category',
+      key: 'id'
     }
-  })
-
-// establecer relaciones
-C_P.belongsTo(Product, {
-  foreignKey: {
-    name: "ProductId",
-    allowNull: false
+  },
+  productId: {
+    type: Sequelize.INTEGER,
+    references: {
+      model: 'Product',
+      key: 'id'
+    }
   }
 });
 
-C_P.belongsTo(Category, {
+// Relacion de uno a muchos entre Category y Product
+Category.hasMany(Product, {
   foreignKey: {
-    name: "CategoryId",
-    allowNull: false
+    name: "id",
+    allowNull: false,
+  }
+});
+Product.belongsTo(Category, {
+  foreignKey: {
+    name: "id",
+    allowNull: false,
   }
 });
 
-Product.hasMany(C_P, {
-  foreignKey: "ProductId"
+// Relacion de muchos a muchos entre Category y Product a través de la tabla de intersección CategoryProduct
+Category.belongsToMany(Product, {
+  through: C_P,
+  foreignKey: {
+    name: "categoryId",
+    allowNull: false,
+  }
 });
-
-Category.hasMany(C_P, {
-  foreignKey: "CategoryId"
+Product.belongsToMany(Category, {
+  through: C_P,
+  foreignKey: {
+    name: "productId",
+    allowNull: false,
+  }
 });
-  
   //Relacion 1:1 User to Attemps
   Attemps.belongsTo(User,{
     foreingKey: 'username',
     targetkey: 'username'
   })
+
   sequelize.sync().then(() => {
     console.log('Tablas creadas o actualizadas en la base de datos.');
   });

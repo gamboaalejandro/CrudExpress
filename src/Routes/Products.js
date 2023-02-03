@@ -1,5 +1,5 @@
 const express = require("express")
-const {Product} = require("../models")
+const {Product,Category,C_P} = require("../models")
 const router = express.Router()
 const {isFloat} =  require("../ValidateFunction")
 
@@ -7,10 +7,16 @@ const {isFloat} =  require("../ValidateFunction")
 //metodo post para la creacion de
 router.post("/Create", async(req,res)=>{
     try{
-        const {name,description,price,quantity} = req.body
-        if((!name || !description || !price || !quantity))
-        return res.status(400).json({error: "Todos los campos son requeridos "})
+        const {name,description,price,quantity, categoria} = req.body
 
+         //validacion de campos no vacios 
+         if((!name || !description || !price || !quantity || !categoria))
+         return res.status(400).json({error: "Todos los campos son requeridos "})
+        //buscamos la categoria y verificamos que exista
+        const category  = await Category.findOne({where:{name: categoria}})
+        //Verificamos que el id de la categoria exista para poder meter el producto
+        if(category.name !== categoria) 
+        return res.status(400).json({error: "Categoria no existe "})
 
         //validacion de no negatividad del precio y la cantidad
         if((price < 0 || quantity < 0))
@@ -27,15 +33,29 @@ router.post("/Create", async(req,res)=>{
         const findProduct =await  Product.findOne({where: {name:name}})
 
         if (findProduct !== null) return res.status(400).json({error:"El producto ya se encuentra registrado"})
-
-        await Product.create({
+        //CREAMOS EL PRODUCTO
+       await Product.create({
             name,
             description,
             price,
             quantity
-        })
-        res.json({Success: "Producto Creado exitosamente"})
-
+        }).then(product => {
+            //antes de crear el producto, se mete a la tabla de interseccion para que se sepa su categoria
+            const Cat_prod = {
+            categoryId: category.id,
+              productId: product.id
+            
+            };
+                //Crea en la base de datos el registro de ese producto con su categoria
+           C_P.create(Cat_prod)
+          })
+          .then(() => {
+            //si es success devuelve la respuesta de la creacion
+            res.status(201).json({ message: 'Producto y categoría guardados con éxito' });
+          })
+          .catch(error => {
+            res.status(400).json({ message: 'Error al guardar producto y categoría' });
+          });
     }catch (error) {
         return res.status(500).json({ error: error.message });
       }
@@ -60,7 +80,7 @@ router.put('/update/:id', async (req,res)=>{
         return res.status(400).json({error: "Campo Cantidad invalido "})
 
         else
-
+        //validacion de campo precio
         if(!(Number.isFinite(updatedProduct.price))) 
         return res.status(400).json({error: "Campo Precio invalido "})
 
@@ -92,5 +112,19 @@ router.get('/listaProducto', async(req,res)=>{
       }
 })
 
+
+
+///Productos por categoria 
+
+router.get("/Productos_por_categoria", async (req,res)=>{
+
+    const products = Product.findAll({
+        include: [{
+            model: C_P,
+            where: { id: 2 }
+        }]
+    });
+      res.json(products)
+})
 
 module.exports = router
