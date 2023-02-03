@@ -9,7 +9,7 @@ const Product = sequelize.define("Product", {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  descripcion: {
+  description: {
     type: Sequelize.TEXT,
     allowNull: false,
   },

@@ -3,6 +3,53 @@ const {Category} = require("../models");
 const router = express.Router();
 
 // Endpoint for creating a category
+
+/**
+ *  @swagger
+  * components:
+ *  schemas:
+ *    Category:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Name of the category
+ *           default: Category
+ *         description: 
+ *           type: string
+ *           description: Description of Category
+ *       required:
+ *         - name
+ *         - description
+ *         
+ */
+
+
+/**
+  @swagger
+ * /Category/Create:
+ *   post:
+ *     summary: Create a Category
+ *     tags:
+ *       - Category
+ *     description: Create a Category
+ *     parameters:
+ *       - name: Category
+ *         in: body
+ *         description: Register a Category in db
+ *         required: true
+ *         schema:
+ *           $ref: '#/components/schemas/Category'
+ * 
+ *     responses:
+ *       200:
+ *         description: Category Successfully registered
+ *       400:
+ *         description: Invalid input data
+ 
+ *       500:
+ *         description: Internal Server Error 
+ */
 router.post("/Create", async (req, res) => {
   try {
     // Creation of the category from a body from the client
@@ -29,6 +76,37 @@ router.post("/Create", async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 })
+/**
+  @swagger
+ * /Category/{id}:
+ *   put:
+ *     summary: Update a Category
+ *     tags:
+ *       - Category
+ *     description: Update a Category
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Category id to find in db
+ *         required: true
+ *         schema:
+ *          type: integer
+ *       - name: Category
+ *         in: body
+ *         description: Update a category a Category in db
+ *         required: true
+ *         schema:
+ *           $ref: '#/components/schemas/Category'
+ * 
+ *     responses:
+ *       200:
+ *         description: Category Successfully registered
+ *       400:
+ *         description: Invalid input data
+ 
+ *       500:
+ *         description: Internal Server Error 
+ */
 
 /// METHOD TO UPDATE THE CATEGORY
 router.put('/:id', async (req, res) => {
@@ -58,6 +136,29 @@ router.put('/:id', async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 })
+
+
+/** 
+ * @swagger
+ * /Category/listaCategoria:
+ *   get:
+ *     summary: Category list
+ *     tags:
+ *       - Category
+ *     description: Get a List of categorys
+ *     responses:
+ *       200:
+ *         description: Category list.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                $ref: '#/components/schemas/Category'
+ *                      
+ *       500:
+ *         description: Error interno del servidor.
+ */
 
 router.get('/ListaCategoria', async (req, res) => {
   try {

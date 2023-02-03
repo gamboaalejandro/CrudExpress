@@ -3,12 +3,12 @@ const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const path = require("path")
-
+ //Definition of swagger options 
 const options = {
 
   definition: {
     
-    components: {}, // ADD THIS LINE!!!
+    components: {},
     info: {
       title: 'tests',
       version: '3.1.0',

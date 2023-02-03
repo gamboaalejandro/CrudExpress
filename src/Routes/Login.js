@@ -6,8 +6,70 @@ const bcrypt = require('bcryptjs');
 const {User, Attemps} = require("../models");
 
 
+/**
+ *  @swagger
+  * components:
+ *  schemas:
+ *    usuario:
+ *       type: object
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: el username del usuario a ser registrado
+ *         password:
+ *           type: string
+ *           description: contrasena del usuario
+ *       required:
+ *         - username
+ *         - password
+ */
 
 //EndPoint for User Login
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     description: Login a user
+ *     summary: login 
+ *     tags: 
+ *       - user
+ *     parameters:
+ *       - name: username
+ *         description: The username of the user
+ *         in: query
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         description: The password of the user
+ *         in: query
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         type: object
+ *         properties:
+ *           Msg:
+ *             type: string
+ *             description: Successful message
+ *       401:
+ *         description: Login failed due to invalid username or password
+ *         type: object
+ *         properties:
+ *           MsgError:
+ *             type: string
+ *             description: Error message
+ *       429:
+ *         description: Login failed due to too many attempts
+ *         type: object
+ *         properties:
+ *           success:
+ *             type: boolean
+ *             description: Indicates whether the login was successful
+ *           message:
+ *             type: string
+ *             description: Error message
+ */
 router.get('/', async (req,res) =>{
     //Get data from body
     //depending on the established business rules it is possible to receive the email or the username

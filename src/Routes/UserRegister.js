@@ -37,11 +37,12 @@ const Validator =  require("../ValidateFunction")
  *         - email
 
  */
+
 /**
   @swagger
  * /registerUser:
  *   post:
- *     summary: registro de usuario
+ *     summary: User Register
  *     tags:
  *       - user
  *     description: Registers a user
@@ -52,6 +53,7 @@ const Validator =  require("../ValidateFunction")
  *         required: true
  *         schema:
  *           $ref: '#/components/schemas/User'
+ * 
  *     responses:
  *       200:
  *         description: Successfully registered
