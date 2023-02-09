@@ -123,13 +123,11 @@ router.post("/Create", async (req, res) => {
                 name: categoria
             }
         })
-
     
         if (!category)
             return res.status(400).json({
                 error: "la categoria no existe"
             })
-            console.log("perreo")
 
         //"Check if the price and quantity are not negative"
         if ((price < 0 || quantity < 0))
