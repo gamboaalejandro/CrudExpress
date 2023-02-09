@@ -22,8 +22,7 @@ Desarrollado por:
 
 > npm run dev
 
-## Si entramos de manera local a
-localhost:3000/api-doc observaremos la documentacion detallada en swagger 
+Si entramos de manera local a localhost:3000/api-doc observaremos la documentacion detallada en swagger 
 
 
 
