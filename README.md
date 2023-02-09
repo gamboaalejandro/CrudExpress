@@ -12,4 +12,18 @@ Desarrollado por:
 
 2. Clonamos dicho repositorio con el siguiente comando 
 
->git clone 
+>git clone https://github.com/gamboaalejandro/CrudExpress.git
+
+3. Utilizar el siguiente comando en la terminal para instalar las dependencias utlizadas en el proyecto
+
+> npm install --save-dev
+
+## utilizar el siguiente comando para iniciar el servidor express
+
+> npm run dev
+
+## Si entramos de manera local a
+localhost:3000/api-doc observaremos la documentacion detallada en swagger 
+
+
+
